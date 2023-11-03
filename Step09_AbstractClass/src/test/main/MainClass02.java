@@ -6,9 +6,9 @@ import test.mypac.Weapon;
 public class MainClass02 {
 	
 	public static void main(String[] args) {
-		
+		String data="abcd";
 		//useString 메소드 호출하기
-		MainClass02.useString("abcd");
+		MainClass02.useString(data);
 		useString("abcd1234");
 		
 		//아래의 useWeapon() 메소드를 여기서 호출해 보세요.
