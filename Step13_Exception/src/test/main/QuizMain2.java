@@ -17,6 +17,43 @@ package test.main;
  */
 public class QuizMain2 {
 	public static void main(String[] args) {
+		//분과 초를 저장할 변수 2개가 필요하다
+		int min=0;
+		int sec=0;
 		
+		//시간이 계속 진행이 되어야 하기 때문에 무한 루프가 필요하다
+		while(true) {
+			//스레드를 1초 지연 시키기
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			//초를 1 증가 시킨다
+			sec++;
+			//sec 이 만일 60 이면 0 으로 바꿔야 한다.
+			if(sec == 60) {
+				sec=0;
+				min++; //60 초 이니 분도 1 증가 
+			}
+			
+			System.out.println(min+"분 "+sec+"초");
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
