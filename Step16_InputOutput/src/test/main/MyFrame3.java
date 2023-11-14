@@ -14,10 +14,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
 
 public class MyFrame3 extends JFrame{
 	//필드
 	File openedFile;
+	JTextArea ta;
 	
 	//생성자
 	public MyFrame3(String title) {
@@ -44,14 +46,46 @@ public class MyFrame3 extends JFrame{
 		mb.add(menu);
 		//프레임의 메소드를 이용해서 메뉴바를 추가하기 
 		setJMenuBar(mb);
-		
-		JTextArea ta=new JTextArea();
+		//JTextArea 의 참조값을 다른 메소드에서 사용할수 있도록 필드에 담는다.
+		ta=new JTextArea();
 		add(ta, BorderLayout.CENTER);
+		//FileFilter 추상클래스 type
+		FileFilter filter=new FileFilter() {
+			//JFileChooser 에 나타낼 설명을 리턴하기
+			@Override
+			public String getDescription() {
+				
+				return "텍스트 파일 ( *.txt )";
+			}
+			//매개변수에 전달되는 File 을 선택가능하게(보이게) 할것인지 여부를 리턴한다.
+			@Override
+			public boolean accept(File f) {
+				if(f.isDirectory()) {//디렉토리는 당연히 보여야 하고 
+					return true;
+				}
+				//파일의 확장자 얻어내기
+				//파일명
+				String fileName=f.getName();
+				//마지막 . 의 인덱스를 얻어와서 
+				int dotIndex=fileName.lastIndexOf(".");
+				if(dotIndex == 0 || dotIndex == -1) {
+					return false;
+				}
+				//파일의 확장자 얻어내기 (마지막 인덱스 +1 번째 인덱스부터 끝까지 문자열 얻어내기)
+				String ext=fileName.substring(dotIndex+1);
+				//확장자가 txt 면 보이도록 한다.
+				if(ext.equals("txt")) {
+					return true;
+				}
+				return false;
+			}
+		};
 		
 		//Open 을 눌렀을때 실행할 리스너 등록
 		openItem.addActionListener((e)->{
 			//파일 선택을 도와 주는 객체 생성
 			JFileChooser fc=new JFileChooser("c:/acorn202310/myFolder");
+			fc.setFileFilter(filter);
 			//파일선택기 실제로 띄우기
 			int result=fc.showOpenDialog(this);
 			//파일을 선택하고 확인을 눌렀다면
@@ -98,26 +132,8 @@ public class MyFrame3 extends JFrame{
 				JOptionPane.showMessageDialog(this, "열린 파일이 없습니다.");
 				return;//메소드를 여기서 끝내기 
 			}
-			//JTextArea 에 입력한 문자열 읽어오기 
-			String content=ta.getText();
-			
-			FileWriter fw=null;
-			BufferedWriter bw=null;
-			try {
-				//현재 선택된 File 객체를 이용해서 FileWriter 객체 생성 
-				fw=new FileWriter(openedFile);
-				bw=new BufferedWriter(fw);
-				bw.write(content);
-				bw.flush();
-				JOptionPane.showMessageDialog(this, "저장 했습니다.");
-			}catch(Exception e2) {
-				e2.printStackTrace();
-			}finally {
-				try {
-					if(bw!=null)bw.close();
-					if(fw!=null)fw.close();
-				}catch(Exception e2) {}
-			}
+			//파일에 문자열을 저장하는 메소드를 호출!
+			saveToFile();
 		});
 		
 		//new 를 눌렀을때
@@ -141,31 +157,36 @@ public class MyFrame3 extends JFrame{
 				}catch(Exception e2) {
 					e2.printStackTrace();
 				}
-				//새로운 파일에 문자열 저장하기 
-				//JTextArea 에 입력한 문자열 읽어오기 
-				String content=ta.getText();
-				
-				FileWriter fw=null;
-				BufferedWriter bw=null;
-				try {
-					//현재 선택된 File 객체를 이용해서 FileWriter 객체 생성 
-					fw=new FileWriter(openedFile);
-					bw=new BufferedWriter(fw);
-					bw.write(content);
-					bw.flush();
-					JOptionPane.showMessageDialog(this, "저장 했습니다.");
-				}catch(Exception e2) {
-					e2.printStackTrace();
-				}finally {
-					try {
-						if(bw!=null)bw.close();
-						if(fw!=null)fw.close();
-					}catch(Exception e2) {}
-				}
+				//파일에 문자열을 저장하는 메소드를 호출!
+				saveToFile();
 			}
 		});
 		
 	}//생성자
+	
+	//JTextArea 에 입력한 문자열을 선택된 파일에 저장하는 메소드
+	public void saveToFile() {
+		//JTextArea 에 입력한 문자열 읽어오기 
+		String content=ta.getText();
+		
+		FileWriter fw=null;
+		BufferedWriter bw=null;
+		try {
+			//현재 선택된 File 객체를 이용해서 FileWriter 객체 생성 
+			fw=new FileWriter(openedFile);
+			bw=new BufferedWriter(fw);
+			bw.write(content);
+			bw.flush();
+			JOptionPane.showMessageDialog(this, "저장 했습니다.");
+		}catch(Exception e2) {
+			e2.printStackTrace();
+		}finally {
+			try {
+				if(bw!=null)bw.close();
+				if(fw!=null)fw.close();
+			}catch(Exception e2) {}
+		}
+	}
 	
 	public static void main(String[] args) {
 		MyFrame3 f=new MyFrame3("제목 없음");
