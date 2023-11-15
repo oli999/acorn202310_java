@@ -6,6 +6,11 @@ import java.sql.PreparedStatement;
 
 public class MainClass02 {
 	public static void main(String[] args) {
+		/*
+		 * CREATE TABLE member(num NUMBER PRIMARY KEY, name VARCHAR2(16), addr VARCHAR2(20));
+		 */
+		
+		
 		//member 테이블에 추가할 회원의 정보라고 가정하자
 		int num=1;
 		String name="김구라";
